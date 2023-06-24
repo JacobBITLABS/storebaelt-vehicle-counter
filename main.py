@@ -60,8 +60,8 @@ from vechicle_counter import TrafficCounter
 
 def CLI():
     #Define default values here to make documentation self-updating
-    minArea_default       = 20
-    direction_default     = ['H','0.5']
+    minArea_default       = 0
+    direction_default     = ['H','0.85']
     numCount_default      = 20
     videoWidth_default    = 640
     videoParams_default   = ['mjpg','avi']
