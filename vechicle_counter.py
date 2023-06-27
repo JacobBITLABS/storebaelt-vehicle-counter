@@ -121,13 +121,15 @@ class TrafficCounter(object):
 	def _draw_bounding_boxes(self, frame, contour_id, bounding_points, cx, cy, prev_cx, prev_cy, point_only=True):
 		if not point_only:
 			cv2.drawContours(frame, [bounding_points], 0, (0,255,0), 1)
+
 		cv2.line(frame,(prev_cx,prev_cy),(cx,cy),(0,0,255),1)          #line between last position and current position
 		cv2.circle(frame, (cx,cy), 1, (0,0,255), 2)
 		cv2.putText(frame, str(contour_id), (cx,cy-15), self.font, 0.4, (255,0,0), 2)
 
 	def _is_line_crossed(self, frame, cx, cy, prev_cx, prev_cy):
-		#print(f"current center: {(cx,cy)}")
-		#print(f"prev    center: {(prev_cx, prev_cy)}")
+		print(f"current center: {(cx,cy)}")
+		print(f"prev    center: {(prev_cx, prev_cy)}")
+
 		is_crossed = False
 		if self.line_direction.upper() == 'H':
 			if (prev_cy <= self.p1_count_line[1] <= cy) or (cy <= self.p1_count_line[1] <= prev_cy):
@@ -140,6 +142,7 @@ class TrafficCounter(object):
 				self.counter += 1
 				cv2.line(frame,self.p1_count_line,self.p2_count_line,(0,255,0),5)
 				is_crossed = True
+				
 		return is_crossed
 
 	def bind_objects(self, frame, thresh_img):
@@ -151,7 +154,7 @@ class TrafficCounter(object):
 		cnts,_ = cv2.findContours(thresh_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) # this line is for opencv 2.4, and also now for OpenCV 4.4, so this is the current one
 		cnts = sorted(cnts,key = cv2.contourArea,reverse=True)[:self.numCnts]
 
-		cnt_id         = 1
+		cnt_id = 1
 		cur_centroids  = []
 		for c in cnts:
 			if cv2.contourArea(c) < self.minArea:           #ignore contours that are smaller than this area
@@ -181,10 +184,10 @@ class TrafficCounter(object):
 				for i in range(len(self.prev_centroids)):
 					# Distance between points 
 					d = 'H'
-					if d == 'H':
+					if self.line_direction.upper() == 'H':
 						# calculate L1 distance between Y_i and Y_i-1
 						dist = np.linalg.norm(C[1] - self.prev_centroids[i][1])
-					if d == 'V':
+					if self.line_direction.upper() == 'V':
 						# calculate L1 distance between X_i and X_i-1
 						dist = np.linalg.norm(C[0] - self.prev_centroids[i][0])
 					else:
@@ -197,15 +200,16 @@ class TrafficCounter(object):
 				
 				# This if is meant to reduce overcounting errors
 				# TODO: This cannot work in Small objects 
-				if minDist < w/2:
-					prev_cx, prev_cy = minPoint
-				else: 
-					prev_cx,prev_cy = cx,cy
-				#prev_cx,prev_cy = minPoint
-			
+				# if minDist < w/20:
+				# 	prev_cx, prev_cy = minPoint
+				# else: 
+				# 	prev_cx, prev_cy = cx, cy
+
+				prev_cx, prev_cy = cx, cy
+				
 			_is_crossed = self._is_line_crossed(frame, cx, cy, prev_cx, prev_cy)
 			# q
-			self._draw_bounding_boxes(frame, cnt_id, points,cx,cy,prev_cx,prev_cy)
+			self._draw_bounding_boxes(frame, cnt_id, points, cx, cy, prev_cx, prev_cy)
 
 			cnt_id += 1
 		self.prev_centroids = cur_centroids       # updating centroids for next frame
@@ -225,7 +229,6 @@ class TrafficCounter(object):
 		k = None
 		cv2.namedWindow('Select Interest of Region', 1)
 		cv2.imshow('setup2', img)
-		print("Going into while loop")
 		while k != ord('q') and k != ord('Q') and k != 27 and k != ('\n'):
 			self.plotting_img = img
 			cv2.setMouseCallback('setup2', self._click_mask_event)
@@ -323,7 +326,7 @@ class TrafficCounter(object):
 			_, threshold_img  = cv2.threshold(threshold_img, 30, 255, cv2.ADAPTIVE_THRESH_MEAN_C)
 
 			##-------Noise Reduction
-			dilated_img   = cv2.dilate(threshold_img, (1,1), iterations=5) # (3,3) does not work in the dark
+			dilated_img   = cv2.dilate(threshold_img, (2,2), iterations=5) # (3,3) does not work in the dark
 
 			##-------Drawing bounding boxes and counting
 			img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)          #Giving frame 3 channels for color (for drawing colored boxes)
@@ -340,7 +343,7 @@ class TrafficCounter(object):
 			cv2.line(img, self.p1_count_line, self.p2_count_line, (0,0,255), 1)   #counting line
 			
 			# cv2.putText(img,f"Total cars: {self.counter}",(15,self._vid_height-15),self.font,1,(0,0,0),7)
-			cv2.putText(img,f"Total Vehicles: {self.counter}",(15,self._vid_height-15),self.font,1,(255,255,255),3)
+			cv2.putText(img,f"Total Vehicles: {self.counter}", (15,self._vid_height-15),self.font,1,(255,255,255),3)
 			# cv2.imshow('Motion Detection',img)
 
 			self.make_collage_of_four(up_left_img=subtracted_img, down_left_img=dilated_img, up_right_img=background_avg, down_right_img=img)
