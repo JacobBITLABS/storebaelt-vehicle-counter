@@ -45,7 +45,7 @@ Finds the contours on a video file
 optional arguments:
   -h, --help            show this help message and exit
   -p PATH, --path PATH  A video filename or path. Works better with .avi
-                        files. If no path or name is provided, the camera will
+                        files. If no path or name is provided, the camera will  
                         be used instead.
   -a MINAREA, --minArea MINAREA
                         The minimum area (in pixels) to draw a bounding box
