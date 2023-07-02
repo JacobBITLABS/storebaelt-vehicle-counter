@@ -3,7 +3,32 @@
 
 This is my take on object detection using openCV. The code base builds heavily on top of [Andres Berejnoi](https://github.com/andresberejnoi/OpenCV_Traffic_Counter) repository, so please give him the credit. However, as I am doing most of my work in small object detection, this is my take for extending the mechanism for small obejcts - here detection objects/vechicles on a bridge. 
 
-This little project was mainly for challenging myself in a detection challenge without the use of deep learning. However I would argue that this exact use case showcases the drawbacks and limitations of these techniques, that deep learning offer. 
+This project was primarily a personal challenge aimed at testing my skills in the field of object detection without relying on deep learning techniques. By exploring alternative methods, I wanted to highlight the drawbacks and limitations inherent in such techniques, which are effectively addressed by the capabilities offered by deep learning
+
+## Main Changes
+Below, I provide a brief overview of the key modifications and significant mechanisms employed in the technique. It is worth noting that I have made several alterations to the filters used.
+
+### Gaussian Blur removed
+The Gaussian Blue filter is commonly employed to reduce noise in images. However, during my experimentation, I observed that the smoothing effect of the filter also blurred the pixel-prints of numerous vehicles, rendering it ineffective in achieving the desired outcome.
+
+### Dilation 
+The original implementation included dilation, but I have made some code refinements. We utilize dilation to enhance the visibility of detections, allowing us to track contours more effectively.
+
+### Binding Objects from frame $C_i$ to $C_{i+1}$
+The object tracking process relies on the distance between detected contours from one frame to the next. However, this approach can be sensitive, particularly when dealing with small objects. In scenarios where vehicles are positioned closely to each other, their contours may appear closer than the previous position of an individual object. To address this challenge, I have incorporated the L1 distance calculation on either the 'x' or 'y' coordinates, depending on the `-d` argument. This modification has significantly enhanced the reliability of object tracking.
+
+### A few GUI improvement and integrations.
+I added the UI to add the dots utilizing the original codes integration of RoI for analysis.
+
+### Parameter finetuning. 
+Since older techniques lack the ability to learn invariants or generalize well, we are compelled to finetune parameters for each specific scenario. I invested  effort into conducting testing across various settings, meticulously adjusting parameters. However, it's important to note that this technique remains sensitive to variations in lighting conditions, weather such as rain, and other environmental factors. Even the showcased GIF could benefit from further finetuning tailored to that specific setting.
+
+## Why do small/ tiny object detection work (okay) in this setting?
+In general, I initially believed that conducting object detection on such small objects would be extremely challenging due to environmental noise. However, the success in this particular setting can be attributed to the consistent background of the four-laned highway, with the only moving objects being the vehicles on it. By examining the subtracted image (top left), valuable insights can be gained regarding whether a vehicle is a truck or a car, making it somewhat frustrating that the actual detection task is more difficult. The utilization of Region of Interest (RoI) analysis significantly enhances the stability and reliability of the analysis, although it is not yet perfect. Nevertheless, I have already identified some ideas for potential improvements.
+
+### Limitations and drawbacks
+This solution is highly parameter-dependent, optimized for the current setting, and sensitive to environmental variations like sunlight, sky conditions, and other factors. During extensive testing, I even evaluated its performance under challenging scenarios, such as heavy rain, where the presence of raindrops on the camera lens introduced significant noise, making it nearly impossible to achieve accurate results. Additionally, testing in low-light conditions posed its own set of challenges. In such situations, both the cars and their front lights were detected as separate entities, necessitating the development of a mechanism to differentiate between them.
+
 
 ## Andres Berejnoi's Blog Post
 In addition to the video, Andres Berejnoi wrote a [short blog post](https://andresberejnoi.com/computer-vision-with-opencv-car-counting-system/) describing this project. It is supposed to be complementary to the video and not a replacement. 
@@ -80,8 +105,12 @@ optional arguments:
 
 ```
 
-The most important argument is `-p` which gives the script the name of the file to analyze (use of live camera video is not working yet). The flag `-d` is used to indicate the direction and position of the counting line. Like:
+The most important argument is `-p` which gives the script the name of the file to analyze (default is Great Belt Bridge live camera feed). The flag `-d` is used to indicate the direction and position of the counting line. Like:
 
+```sh
+python3 main.py -d H 0.85
+```
+or
 ```sh
 python main.py -p <path_to_your_video> -d v 0.5
 ```
@@ -106,9 +135,13 @@ python main.py -p <path_to_your_video> -vo some_video_name -vp MJPG avi
 
 While the video windows are open, you can press `s` to save a screenshot at that particular frame. Pressing spacebar will pause the video (press spacebar again to resume).
 
-## Interface
-I have updated the project and moved away from the original script. In the new one, the computer vision parts are handled in a class TrafficCoutner in traffic_counter.py. To run the script, you must run main.py with a combination of parameters. For example:
+# Interface
+### 1) Pick RoI
+When executing the script the user will first be meet with an interface to big the RoI (region of interest). This is simply done by a mouse click to place white dots on the screen. You can use as many as you want making the RoI arbitrarily jagged. However I recommend that you use to acutally filter noisy areas out of the analysis (as you can see I did not do, with the ship in the gif above). When you are done press `q`-key. 
 
-```sh
-python main.py -p <path_to_your_video> -d V 0.5 
-```
+### 2) Analysis is running on the live feed
+A second screen is prompted with the four analyzing feeds.  
+- Top Left: Subtracted Image (running avg background (reference background) and current frame).
+- Bottom Left: Dialted image (10 iterations).
+- Top Right: Background average.
+- Bottom Right: Current Frame.

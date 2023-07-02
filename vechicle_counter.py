@@ -151,7 +151,7 @@ class TrafficCounter(object):
 		thresh_img: numpy image after subtracting the background and all thresholds and noise reduction operations are applied
 		'''
 		cnts,_ = cv2.findContours(thresh_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) # this line is for opencv 2.4, and also now for OpenCV 4.4, so this is the current one
-		cnts = sorted(cnts,key = cv2.contourArea,reverse=True)[:self.numCnts]
+		cnts = sorted(cnts,key = cv2.contourArea, reverse=True)[:self.numCnts]
 
 		cnt_id = 1
 		cur_centroids  = []
@@ -305,10 +305,10 @@ class TrafficCounter(object):
 				working_img = cv2.bitwise_and(working_img,self.black_mask)
 
 			if frame_id < self.starting_frame:
-				cv2.accumulateWeighted(working_img,self.raw_avg,rate_of_influence)
+				cv2.accumulateWeighted(working_img,self.raw_avg, rate_of_influence)
 				continue
 			
-			cv2.accumulateWeighted(working_img,self.raw_avg,rate_of_influence)
+			cv2.accumulateWeighted(working_img, self.raw_avg, rate_of_influence)
 			background_avg = cv2.convertScaleAbs(self.raw_avg)           #reference background average image
 			subtracted_img = cv2.absdiff(background_avg, working_img)
 			
@@ -318,7 +318,7 @@ class TrafficCounter(object):
 			# subtracted_img = cv2.GaussianBlur(subtracted_img,(21,21),0)
 			# subtracted_img = cv2.GaussianBlur(subtracted_img,(1,1),0)
 			# subtracted_img = cv2.GaussianBlur(subtracted_img,(1,1),0)
-
+	
 
 			##-------Applying threshold
 			_, threshold_img  = cv2.threshold(subtracted_img, 30, 255, 0)
