@@ -1,60 +1,3 @@
-# import cv2
-# import time
-
-
-# def display_video_frames(url, buffer_size):
-#     # Create a video capture object
-#     cap = cv2.VideoCapture(url)
-
-#     # Set the buffer size of the video capture object
-#     cap.set(cv2.CAP_PROP_BUFFERSIZE, buffer_size)
-
-#     fps = cap.get(cv2.CAP_PROP_FPS)
-#     print(f"{fps} frames per second")
-
-#     # Check if the video capture object was successfully opened
-#     if not cap.isOpened():
-#         print("Failed to open video stream.")
-#         return    
-    
-#     # Calculate the delay between each frame based on the desired fps
-#     delay = 1 / fps
-
-#     while True:
-#         # Read the next frame from the video stream
-#         ret, frame = cap.read()
-
-#         # Check if the frame was successfully read
-#         if ret:
-#             # Display the frame
-#             cv2.imshow('Storebaelt Pylon ', frame)
-    
-#             # Check for 'q' key press to exit
-#             if cv2.waitKey(1) & 0xFF == ord('q'):
-#                 break
-#         else:
-#             print("Cannot read frame...")
-#             # If reading the frame failed, break the loop
-#             break
-
-#         # Introduce a delay to achieve the desired frame rate
-#         time.sleep(delay)
-
-#     # Release the video capture object and close the window
-#     cap.release()
-#     cv2.destroyAllWindows()
-
-
-# if __name__ == '__main__':
-#     # URL of the video stream
-#     video_url = "https://stream.sob.m-dn.net/live/sb1/index.m3u8"
-
-#     # Buffer size in frames
-#     buffer_size = 20000
-
-#     # Display the video frames
-#     display_video_frames(video_url, buffer_size)
-
 import argparse 
 from vechicle_counter import TrafficCounter
 
@@ -62,7 +5,7 @@ def CLI():
     #Define default values here to make documentation self-updating
     minArea_default       = 0
     direction_default     = ['H','0.85']
-    numCount_default      = 20
+    numCount_default      = 10
     videoWidth_default    = 640
     videoParams_default   = ['mjpg','avi']
     startingFrame_default = 10

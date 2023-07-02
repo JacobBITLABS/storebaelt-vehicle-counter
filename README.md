@@ -1,31 +1,12 @@
-# Traffic Counter
+# Storebaelt Vechicle Counter - The Great Belt Bridge using OpenCV
+![show case](/gifs/showcase.gif)
 
-![car counting](./screenshots/316_car_counting.jpeg)
-![car counting](./screenshots/316_threshold_applied.jpeg)
+This is my take on object detection using openCV. The code base builds heavily on top of [Andres Berejnoi](https://github.com/andresberejnoi/OpenCV_Traffic_Counter) repository, so please give him the credit. However, as I am doing most of my work in small object detection, this is my take for extending the mechanism for small obejcts - here detection objects/vechicles on a bridge. 
 
-![Collage image](./screenshots/316_collage.jpeg)
+This little project was mainly for challenging myself in a detection challenge without the use of deep learning. However I would argue that this exact use case showcases the drawbacks and limitations of these techniques, that deep learning offer. 
 
-This is the result of my undergraduate summer of research (2015) for the computer science department at Berea College. The OpenCV library is used to detect moving objects in a video feed by background subtraction and edge detection. 
-
-No machine learning or fancy AI is being done here. This was mainly to keep the processing requirements low.
-
-The system counts the number of cars passing the road. The project was developed on the original Raspberry Pi and therefore it needed to be fast to run. However, a faster device is recommended. 
-
-The project was recently updated to use Python 3.7.8 and OpenCV 4.4.0.
-
-You can check the paper report or the blog posts (links at the bottom) I made at the time to get a better idea about the motivation for the project.
-
-## Youtube
-I created a nice YouTube video explaining the project. You can watch it below:
-
-- [Build a Traffic Counter With Python](https://youtu.be/_UGCBud63Eo)
-
-I encourage you to subscribe to the channel to get notified when I post about new projects. Finally, if you have any questions, let me know in the comment section of the video, since it is something I check often. 
-
-## Blog Post
-In addition to the video, I wrote a [short blog post](https://andresberejnoi.com/computer-vision-with-opencv-car-counting-system/) describing this project. It is supposed to be complementary to the video and not a replacement. 
-
-You can also leave a comment there with questions or ideas. 
+## Andres Berejnoi's Blog Post
+In addition to the video, Andres Berejnoi wrote a [short blog post](https://andresberejnoi.com/computer-vision-with-opencv-car-counting-system/) describing this project. It is supposed to be complementary to the video and not a replacement. 
 
 ## How to Set Up
 The `requirements.txt` file contains the required libraries to run the script. It also contains other libraries like Jupyter notebook which is not really necessary. The main libraries and configurations needed are the following:
@@ -131,27 +112,3 @@ I have updated the project and moved away from the original script. In the new o
 ```sh
 python main.py -p <path_to_your_video> -d V 0.5 
 ```
-
-There are other parameters that can be modified, but as of now, I have not included a way to change them once the script starts. 
-
-Once the script runs, a frame from the video will be displayed and you can click on several points on the frame to select an area of interest to calculate. Everything outside the selected area will be ignored. To proceed to the next part, press `q` or `enter` on the keyboard.
-
-![Initial cropping](./screenshots/roi_mask_1207.0.jpeg)
-![after applying mask](./screenshots/screenshot_1207.0.jpeg)
-
-## Blog Post
-
-As part of the research requirements, I wrote blog posts describing the progress made each week. It can be found
-at:
-
-[blog series](https://andrescscresearch.wordpress.com/)
-
-## Paper Draft
-
-A paper report of the work is also included in the repository:
-
-
-[PaperReport_traffic_counter.pdf](./PaperReport_traffic_counter.pdf)
-
-
-# Deformable-DETR-Finetune-NWD

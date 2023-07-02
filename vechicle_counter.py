@@ -12,7 +12,7 @@ class TrafficCounter(object):
 				 video_width = 640,
 				 min_area = 200,
 				 video_out='',
-				 numCnts=10,
+				 numCnts=20,
 				 out_video_params={},
 				 starting_frame=10,):
 		self.crop_rect         = []         #stores the click coordinates where to crop the frame
@@ -127,9 +127,8 @@ class TrafficCounter(object):
 		cv2.putText(frame, str(contour_id), (cx,cy-15), self.font, 0.4, (255,0,0), 2)
 
 	def _is_line_crossed(self, frame, cx, cy, prev_cx, prev_cy):
-		print(f"current center: {(cx,cy)}")
-		print(f"prev    center: {(prev_cx, prev_cy)}")
-
+		# print(f"current center: {(cx,cy)}")
+		# print(f"prev    center: {(prev_cx, prev_cy)}")
 		is_crossed = False
 		if self.line_direction.upper() == 'H':
 			if (prev_cy <= self.p1_count_line[1] <= cy) or (cy <= self.p1_count_line[1] <= prev_cy):
@@ -142,7 +141,7 @@ class TrafficCounter(object):
 				self.counter += 1
 				cv2.line(frame,self.p1_count_line,self.p2_count_line,(0,255,0),5)
 				is_crossed = True
-				
+
 		return is_crossed
 
 	def bind_objects(self, frame, thresh_img):
@@ -355,6 +354,7 @@ class TrafficCounter(object):
 			if k == 27 or k == ord('q') or k == ord('Q'):
 				break
 			elif k == ord('s') or k == ord('S'):                #if the letter s/S is pressed, a screenshot of the current frame on each window will be saved to the current folder
+				print("S/s is pressed, saving snapshot!")
 				cv2.imwrite(os.path.join(self.screenshot_folder,f"{frame_id}_masked_frame.jpeg"),working_img)
 				cv2.imwrite(os.path.join(self.screenshot_folder,f"{frame_id}_background_subtracted.jpeg"),subtracted_img)
 				cv2.imwrite(os.path.join(self.screenshot_folder,f"{frame_id}_threshold_applied.jpeg"),dilated_img)
